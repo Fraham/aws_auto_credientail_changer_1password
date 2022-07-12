@@ -4,8 +4,8 @@ Script to update the access keys used for the AWS CLI and then saved into a 1Pas
 
 ## Requirements
 
-* AWS CLI
-* 1Password CLI
+- AWS CLI
+- 1Password CLI
 
 ## Process
 
@@ -23,4 +23,9 @@ pwsh ./run.ps1
 
 ## 1Password Item setup
 
-TODO: this section
+- Item name: `aws`
+- Vault: `Private`
+- AWS Access key label: `accesskey`
+- AWS Secret key label: `secretkey`
+- One time password label: `one-time password`
+- MFA Device label: `mfa device`
