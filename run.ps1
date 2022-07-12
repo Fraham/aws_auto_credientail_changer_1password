@@ -1,20 +1,29 @@
 [CmdletBinding()]
 param (
-    # Parameter help description
     [Parameter()]
     [String]
     $onePassAwsItem = "aws",
 
-    # Parameter help description
     [Parameter()]
     [String]
-    $onePassAwsVault = "Private"
-)
+    $onePassAwsVault = "Private",
 
-$accessKeyLabel = "accesskey"
-$secretKeyLabel = "secretkey"
-$totpLabel = "one-time password"
-$mfaDeviceLabel = "mfa device"
+    [Parameter()]
+    [String]
+    $accessKeyLabel = "accesskey",    
+
+    [Parameter()]
+    [String]
+    $secretKeyLabel = "secretkey",
+
+    [Parameter()]
+    [String]
+    $totpLabel = "one-time password",
+
+    [Parameter()]
+    [String]
+    $mfaDeviceLabel = "mfa device"
+)
 
 $beforeAccessKey = $null
 $beforeSecretKey = $null
