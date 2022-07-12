@@ -59,7 +59,21 @@ Write-Host $beforeSecretKey
 Write-Host $totp
 Write-Host $mfaDevice
 
-#TODO: auth mfa with aws
+$mfaRawData = $(aws sts get-session-token --serial-number $mfaDevice --token-code $totp)
+
+if (!$?){
+    Write-Error "Error getting MFA session"
+    return
+}
+
+$mfaCredentials = ($mfaRawData | ConvertFrom-Json ).Credentials
+
+Write-Host $mfaCredentials
+
+$env:AWS_ACCESS_KEY_ID = $mfaCredentials.AccessKeyId
+$env:AWS_SECRET_ACCESS_KEY = $mfaCredentials.SecretAccessKey
+
 #TODO: create new access keys
 #TODO: save new access keys to 1password
 #TODO: remove the old access keys
+
