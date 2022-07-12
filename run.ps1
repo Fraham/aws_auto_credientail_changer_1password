@@ -1,12 +1,15 @@
 #TODO: move to params
 $1passwordAwsItem = "aws"
 $1passwordAwsVault = "Private"
+$accessKeyLabel = "accesskey"
+$secretKeyLabel = "secretkey"
+$totpLabel = "one-time password"
+$mfaDeviceLabel = "mfa device"
 
 $beforeAccessKey = $null
 $beforeSecretKey = $null
-
-
 $totp = $null
+$mfaDevice = $null
 
 $1passwordRawData = $(op item get $1passwordAwsItem --vault $1passwordAwsVault --format json)
 
@@ -18,14 +21,18 @@ if (!$?){
 $1passwordData = ($1passwordRawData | ConvertFrom-Json)
 
 $1passwordData.fields | ForEach-Object {
-    if ($_.label -eq "accesskey"){
+    #TODO: change to switch
+    if ($_.label -eq $accessKeyLabel ){
         $beforeAccessKey = $_.value
     }
-    if ($_.label -eq "secretkey"){
+    if ($_.label -eq $secretKeyLabel){
         $beforeSecretKey = $_.value
     }
-    if ($_.label -eq "one-time password"){
+    if ($_.label -eq $totpLabel){
         $totp = $_.totp
+    }
+    if ($_.label -eq $mfaDeviceLabel){
+        $mfaDevice = $_.value
     }
 }
 
@@ -41,11 +48,16 @@ if ($null -eq $totp){
     Write-Error "Something wrong - no totp"
     return
 }
+if ($null -eq $mfaDevice){
+    Write-Error "Something wrong - no mfa device"
+    return
+}
 
 #TODO: remove these
 Write-Host $beforeAccessKey
 Write-Host $beforeSecretKey
 Write-Host $totp
+Write-Host $mfaDevice
 
 #TODO: auth mfa with aws
 #TODO: create new access keys
