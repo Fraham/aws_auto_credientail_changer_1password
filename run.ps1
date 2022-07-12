@@ -1,5 +1,11 @@
-#TODO: move to params
-$1passwordAwsItem = "aws"
+[CmdletBinding()]
+param (
+    # Parameter help description
+    [Parameter()]
+    [String]
+    $onePasswordAwsItem = "aws"
+)
+
 $1passwordAwsVault = "Private"
 $accessKeyLabel = "accesskey"
 $secretKeyLabel = "secretkey"
@@ -11,7 +17,9 @@ $beforeSecretKey = $null
 $totp = $null
 $mfaDevice = $null
 
-$1passwordRawData = $(op item get $1passwordAwsItem --vault $1passwordAwsVault --format json)
+
+
+$1passwordRawData = $(op item get $onePasswordAwsItem --vault $1passwordAwsVault --format json)
 
 if (!$?) {
     Write-Error "Something wrong"
@@ -94,8 +102,8 @@ $newSecretKey = $createKeyData.SecretAccessKey
 Write-Host $newAccessKey
 Write-Host $newSecretKey
 
-(op item edit $1passwordAwsItem --vault $1passwordAwsVault "$($accessKeyLabel)=$($newAccessKey)") | Out-Null
-(op item edit $1passwordAwsItem --vault $1passwordAwsVault "$($secretKeyLabel)=$($newSecretKey)") | Out-Null
+(op item edit $onePasswordAwsItem --vault $1passwordAwsVault "$($accessKeyLabel)=$($newAccessKey)") | Out-Null
+(op item edit $onePasswordAwsItem --vault $1passwordAwsVault "$($secretKeyLabel)=$($newSecretKey)") | Out-Null
 
 (aws iam delete-access-key --access-key-id $beforeAccessKey) | Out-Null
 
