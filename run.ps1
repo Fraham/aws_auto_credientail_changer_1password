@@ -90,9 +90,12 @@ $createKeyData = ($createKeyRawData | ConvertFrom-Json).AccessKey
 $newAccessKey = $createKeyData.AccessKeyId
 $newSecretKey = $createKeyData.SecretAccessKey
 
+#TODO: remove these
 Write-Host $newAccessKey
 Write-Host $newSecretKey
 
-#TODO: save new access keys to 1password
+(op item edit $1passwordAwsItem --vault $1passwordAwsVault "$($accessKeyLabel)=$($newAccessKey)") | Out-Null
+(op item edit $1passwordAwsItem --vault $1passwordAwsVault "$($secretKeyLabel)=$($newSecretKey)") | Out-Null
+
 #TODO: remove the old access keys
 
