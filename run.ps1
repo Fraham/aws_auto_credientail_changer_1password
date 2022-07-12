@@ -97,5 +97,5 @@ Write-Host $newSecretKey
 (op item edit $1passwordAwsItem --vault $1passwordAwsVault "$($accessKeyLabel)=$($newAccessKey)") | Out-Null
 (op item edit $1passwordAwsItem --vault $1passwordAwsVault "$($secretKeyLabel)=$($newSecretKey)") | Out-Null
 
-#TODO: remove the old access keys
+(aws iam delete-access-key --access-key-id $beforeAccessKey) | Out-Null
 
