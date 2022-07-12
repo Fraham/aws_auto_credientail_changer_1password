@@ -3,10 +3,14 @@ param (
     # Parameter help description
     [Parameter()]
     [String]
-    $onePasswordAwsItem = "aws"
+    $onePassAwsItem = "aws",
+
+    # Parameter help description
+    [Parameter()]
+    [String]
+    $onePassAwsVault = "Private"
 )
 
-$1passwordAwsVault = "Private"
 $accessKeyLabel = "accesskey"
 $secretKeyLabel = "secretkey"
 $totpLabel = "one-time password"
@@ -19,7 +23,7 @@ $mfaDevice = $null
 
 
 
-$1passwordRawData = $(op item get $onePasswordAwsItem --vault $1passwordAwsVault --format json)
+$1passwordRawData = $(op item get $onePassAwsItem --vault $onePassAwsVault --format json)
 
 if (!$?) {
     Write-Error "Something wrong"
@@ -102,8 +106,8 @@ $newSecretKey = $createKeyData.SecretAccessKey
 Write-Host $newAccessKey
 Write-Host $newSecretKey
 
-(op item edit $onePasswordAwsItem --vault $1passwordAwsVault "$($accessKeyLabel)=$($newAccessKey)") | Out-Null
-(op item edit $onePasswordAwsItem --vault $1passwordAwsVault "$($secretKeyLabel)=$($newSecretKey)") | Out-Null
+(op item edit $onePassAwsItem --vault $onePassAwsVault "$($accessKeyLabel)=$($newAccessKey)") | Out-Null
+(op item edit $onePassAwsItem --vault $onePassAwsVault "$($secretKeyLabel)=$($newSecretKey)") | Out-Null
 
 (aws iam delete-access-key --access-key-id $beforeAccessKey) | Out-Null
 
