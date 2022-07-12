@@ -17,7 +17,9 @@ Script to update the access keys used for the AWS CLI and then saved into a 1Pas
 
 ## Usage
 
-TODO: this section
+```
+pwsh ./run.ps1
+```
 
 ## 1Password Item setup
 
