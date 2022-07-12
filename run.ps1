@@ -30,6 +30,8 @@ $beforeSecretKey = $null
 $totp = $null
 $mfaDevice = $null
 
+Write-Host "Getting the current AWS crediemtials from 1Password"
+
 $1passwordRawData = $(op item get $onePassAwsItem --vault $onePassAwsVault --format json)
 
 if (!$?) {
@@ -77,6 +79,8 @@ $env:AWS_ACCESS_KEY_ID = $beforeAccessKey
 $env:AWS_SECRET_ACCESS_KEY = $beforeSecretKey
 $env:AWS_SESSION_TOKEN = $null
 
+Write-Host "Creating a new session with access key $($beforeAccessKey) and MFA device $($mfaDevice)"
+
 $mfaRawData = $(aws sts get-session-token --serial-number $mfaDevice --token-code $totp)
 
 if (!$?) {
@@ -90,6 +94,8 @@ $env:AWS_ACCESS_KEY_ID = $mfaCredentials.AccessKeyId
 $env:AWS_SECRET_ACCESS_KEY = $mfaCredentials.SecretAccessKey
 $env:AWS_SESSION_TOKEN = $mfaCredentials.SessionToken
 
+Write-Host "Creating new access keys"
+
 $createKeyRawData = $(aws iam create-access-key)
 
 if (!$?) {
@@ -99,11 +105,17 @@ if (!$?) {
 
 $createKeyData = ($createKeyRawData | ConvertFrom-Json).AccessKey
 
+Write-Host "Created new access key $($createKeyData.AccessKeyId)"
+
 $newAccessKey = $createKeyData.AccessKeyId
 $newSecretKey = $createKeyData.SecretAccessKey
 
+Write-Host "Saving the new keys in 1Password"
+
 (op item edit $onePassAwsItem --vault $onePassAwsVault "$($accessKeyLabel)=$($newAccessKey)") | Out-Null
 (op item edit $onePassAwsItem --vault $onePassAwsVault "$($secretKeyLabel)=$($newSecretKey)") | Out-Null
+
+Write-Host "Removing the access key $($beforeAccessKey)"
 
 (aws iam delete-access-key --access-key-id $beforeAccessKey) | Out-Null
 
