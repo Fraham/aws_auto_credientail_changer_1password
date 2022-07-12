@@ -17,11 +17,16 @@ Script to update the access keys used for the AWS CLI and then saved into a 1Pas
 
 ## Usage
 
-```
-pwsh ./run.ps1
-```
+- Use default values
+  ```powershell
+  pwsh ./run.ps1
+  ```
+- or override any of the parameters
+  ```powershell
+  pwsh ./run.ps1 -onePassAwsItem 'aws' -onePassAwsVault 'Private' -accessKeyLabel 'accesskey' -secretKeyLabel 'secretkey' -totpLabel 'one-time password' -mfaDeviceLabel 'mfa device'
+  ```
 
-## 1Password Item setup
+## Default 1Password Item setup
 
 - Item name: `aws`
 - Vault: `Private`
