@@ -30,30 +30,29 @@ $beforeSecretKey = $null
 $totp = $null
 $mfaDevice = $null
 
-
-
 $1passwordRawData = $(op item get $onePassAwsItem --vault $onePassAwsVault --format json)
 
 if (!$?) {
-    Write-Error "Something wrong"
+    Write-Error "Something wrong when trying to retreive the item from 1Password"
     return
 }
 
-$1passwordData = ($1passwordRawData | ConvertFrom-Json)
+$1passwordData = ($1passwordRawData | ConvertFrom-Json).fields 
 
-$1passwordData.fields | ForEach-Object {
-    #TODO: change to switch
-    if ($_.label -eq $accessKeyLabel ) {
-        $beforeAccessKey = $_.value
-    }
-    if ($_.label -eq $secretKeyLabel) {
-        $beforeSecretKey = $_.value
-    }
-    if ($_.label -eq $totpLabel) {
-        $totp = $_.totp
-    }
-    if ($_.label -eq $mfaDeviceLabel) {
-        $mfaDevice = $_.value
+foreach ($field in $1passwordData) {
+    switch ($field.label) {
+        $accessKeyLabel { 
+            $beforeAccessKey = $field.value
+        }
+        $secretKeyLabel { 
+            $beforeSecretKey = $field.value 
+        }
+        $totpLabel { 
+            $totp = $field.totp 
+        }
+        $mfaDeviceLabel { 
+            $mfaDevice = $field.value 
+        }
     }
 }
 
@@ -74,12 +73,6 @@ if ($null -eq $mfaDevice) {
     return
 }
 
-#TODO: remove these
-Write-Host $beforeAccessKey
-Write-Host $beforeSecretKey
-Write-Host $totp
-Write-Host $mfaDevice
-
 $env:AWS_ACCESS_KEY_ID = $beforeAccessKey
 $env:AWS_SECRET_ACCESS_KEY = $beforeSecretKey
 $env:AWS_SESSION_TOKEN = $null
@@ -92,8 +85,6 @@ if (!$?) {
 }
 
 $mfaCredentials = ($mfaRawData | ConvertFrom-Json ).Credentials
-
-Write-Host $mfaCredentials
 
 $env:AWS_ACCESS_KEY_ID = $mfaCredentials.AccessKeyId
 $env:AWS_SECRET_ACCESS_KEY = $mfaCredentials.SecretAccessKey
@@ -110,10 +101,6 @@ $createKeyData = ($createKeyRawData | ConvertFrom-Json).AccessKey
 
 $newAccessKey = $createKeyData.AccessKeyId
 $newSecretKey = $createKeyData.SecretAccessKey
-
-#TODO: remove these
-Write-Host $newAccessKey
-Write-Host $newSecretKey
 
 (op item edit $onePassAwsItem --vault $onePassAwsVault "$($accessKeyLabel)=$($newAccessKey)") | Out-Null
 (op item edit $onePassAwsItem --vault $onePassAwsVault "$($secretKeyLabel)=$($newSecretKey)") | Out-Null
