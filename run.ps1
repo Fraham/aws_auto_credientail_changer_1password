@@ -14,7 +14,7 @@ param (
 
     [Parameter()]
     [String]
-    $secretKeyLabel = "secretkey",
+    $secretKeyLabel = "secretaccesskey",
 
     [Parameter()]
     [String]
@@ -22,7 +22,7 @@ param (
 
     [Parameter()]
     [String]
-    $mfaDeviceLabel = "mfa device"
+    $mfaDeviceLabel = "mfaserial"
 )
 
 $beforeAccessKey = $null
